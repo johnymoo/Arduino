@@ -94,13 +94,13 @@ void readVOC()
     pwm_value1 = pwm_value2;
     pwm_value2 = tmp;
   }
-  pwm_co2 = 40*pwm_value1-1800;
-  pwm_voc = 25*pwm_value2-125;
+  pwm_co2 = 40*pwm_value1/1000.0-1800;
+  pwm_voc = 25*pwm_value2/1000.0-125;
   
   Serial.print("SGX in PWM (%): CO2 ");  
-  Serial.print(pwm_value1);
+  Serial.print(pwm_value1/1000.0);
   Serial.print(" VOC ");
-  Serial.println(pwm_value2);
+  Serial.println(pwm_value2/1000.0);
   Serial.print("CO2: ");
   Serial.print(pwm_co2);
   Serial.print(" ppm ");
@@ -126,7 +126,7 @@ void loop() {
 }
 
 void falling() {
-  pwm_value = (millis() - prev_time)*3;
+  pwm_value = (micros() - prev_time)*3;
   if( !channel ){
     pwm_value1 = pwm_value;
   } 
@@ -138,7 +138,7 @@ void falling() {
 }
 
 void rising(){
-  prev_time = millis();
+  prev_time = micros();
   attachInterrupt(1, falling, FALLING);
 }
 
