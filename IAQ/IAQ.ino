@@ -81,7 +81,7 @@ int readPPM()
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-  delay(5000);
+  delay(10000);
   attachInterrupt(1, rising, RISING);
 }
 
@@ -96,14 +96,17 @@ void readVOC()
   }
   pwm_co2 = 40*pwm_value1-1800;
   pwm_voc = 25*pwm_value2-125;
-    
-  //Serial.print(pwm_value1);
-  //Serial.print(" ");
-  //Serial.println(pwm_value2);
+  
+  Serial.print("SGX in PWM (%): CO2 ");  
+  Serial.print(pwm_value1);
+  Serial.print(" VOC ");
+  Serial.println(pwm_value2);
   Serial.print("CO2: ");
-  Serial.println(pwm_co2);
-  Serial.print("VOC: ");
-  Serial.println(pwm_voc);
+  Serial.print(pwm_co2);
+  Serial.print(" ppm ");
+  Serial.print(" VOC: ");
+  Serial.print(pwm_voc);
+  Serial.println(" ppa");
 }
 
 // the loop function runs over and over again forever
@@ -113,8 +116,9 @@ void loop() {
   {
     ppm = readPPM();
   
-    Serial.print("6713 ppm: ");
-    Serial.println(ppm);
+    Serial.print("6713: ");
+    Serial.print(ppm);
+    Serial.println(" ppm");
      readVOC();
 	// 6713 sample CO2 every 5 seconds
     delay(5000);
