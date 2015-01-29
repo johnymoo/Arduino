@@ -23,6 +23,7 @@ int pwm_voc = 0;
 
 boolean channel = false;
 unsigned long tmp;
+unsigned long cnt = 0;
 
 // send request to read current gas measurement in ppm
 // return status: 0 success
@@ -81,48 +82,57 @@ int readPPM()
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-  delay(10000);
+  delay(5000);
+  Serial.println("Time\tCO2_PWM(%)\tVOC_PWM(%)\tCO2(ppm)\tVOC(ppa)\tAAS_CO2(ppm)");
   attachInterrupt(1, rising, RISING);
 }
 
 void readVOC()
 {
+  static unsigned long co2_value, voc_value;
+  noInterrupts(); // turn interrupts off quickly while we take local copies of the shared variables
   // make sure pwm_value 1 > pwm_value2
-  if( pwm_value1 < pwm_value2 )
-  {
-    tmp = pwm_value1;
-    pwm_value1 = pwm_value2;
-    pwm_value2 = tmp;
-  }
-  pwm_co2 = 40*pwm_value1/1000.0-1800;
-  pwm_voc = 25*pwm_value2/1000.0-125;
+  co2_value = (pwm_value1 > pwm_value2)?pwm_value1:pwm_value2;
+  voc_value = (pwm_value1 < pwm_value2)?pwm_value1:pwm_value2;
+  interrupts(); 
   
-  Serial.print("SGX in PWM (%): CO2 ");  
-  Serial.print(pwm_value1/1000.0);
-  Serial.print(" VOC ");
-  Serial.println(pwm_value2/1000.0);
-  Serial.print("CO2: ");
+  pwm_co2 = 40*co2_value/1000.0-1800;
+  pwm_voc = 25*voc_value/1000.0-125;
+  
+  //Serial.print("SGX in PWM (%): CO2 ");  
+  Serial.print(co2_value/1000.0);
+  //Serial.print(" VOC ");
+  Serial.print("\t");
+  Serial.print(voc_value/1000.0);
+  //Serial.print("CO2: ");
+  Serial.print("\t");
   Serial.print(pwm_co2);
-  Serial.print(" ppm ");
-  Serial.print(" VOC: ");
+  //Serial.print(" ppm ");
+  //Serial.print(" VOC: ");
+  Serial.print("\t");
   Serial.print(pwm_voc);
-  Serial.println(" ppa");
+  //Serial.println(" ppa");
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  
   if( queryPPM() == 0 )
   {
     ppm = readPPM();
   
-    Serial.print("6713: ");
-    Serial.print(ppm);
-    Serial.println(" ppm");
+    //Serial.print("6713: ");
+    //Serial.print(ppm);
+    //Serial.println(" ppm");
+    Serial.print(cnt);
+    Serial.print("\t");
      readVOC();
+     Serial.print("\t");
+     Serial.println(ppm);
 	// 6713 sample CO2 every 5 seconds
     delay(5000);
+    cnt++;
   }
+  interrupts();
 }
 
 void falling() {
