@@ -282,7 +282,7 @@ void loop() {
   {
     TimeOfsample = 0;
     TimesOfInt = 0;
-    
+    time++;
     //read VOC
     noInterrupts();
     for( i=0; i<5; i++ )
