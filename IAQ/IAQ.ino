@@ -208,7 +208,7 @@ unsigned int GetDUST_SmallPin2(void)  //??μ?D?·?3?(1-2um)?¨?è
 void setup() {
   int i;
   //initialize
-  Serial.begin(115200);
+  Serial.begin(9600);
   Wire.begin();
   DataInit(&DUST_Small_Pin1 ,0); 
   DataInit(&DUST_Small_Pin2 ,0);
@@ -217,23 +217,23 @@ void setup() {
   pinMode(DUST_PWM_PIN2, INPUT);
   
   // print header
-  Serial.print("Time");
+  //Serial.print("Time");
   for( i=0; i<5; i++)
   {
     pinMode(pinNumber[i],INPUT);
-    Serial.print(delimiter);
+    /*Serial.print(delimiter);
     Serial.print("VOC");
     Serial.print(i); 
     Serial.print(delimiter);
     Serial.print("CO2");
-    Serial.print(i);
+    Serial.print(i);*/
   }
-  Serial.print(delimiter);
+  /*Serial.print(delimiter);
   Serial.print("AAS_CO2");
   Serial.print(delimiter);
   Serial.print("Dust1");
   Serial.print(delimiter);
-  Serial.print("Dust2");
+  Serial.println("Dust2");*/
   
   //allow sensors to warm up
   delay(10000);    
@@ -291,24 +291,24 @@ void loop() {
       pwmValueVOC[i] = (pwmValue1Shared[i] < pwmValue2Shared[i])?pwmValue1Shared[i]:pwmValue2Shared[i];
     }
     interrupts();
-    
+
     //read CO2
-    if( queryCO2() == 0 )
+    /*if( queryCO2() == 0 )
     {
       ppm = readCO2PPM();
-    }
-    
+    }*/
+    ppm=800;
     //output all readings
-    Serial.print(time); // Time
+    //Serial.print(time); // Time
     //VOC
     for( i=0; i<5; i++ )
     {
-      Serial.print(delimiter);
       Serial.print(pwmValueVOC[i]*3/1000.0);
       Serial.print(delimiter);
       Serial.print(pwmValueCO2[i]*3/1000.0);
+      Serial.print(delimiter);
     }
-    Serial.print(delimiter);
+    //Serial.print(delimiter);
     Serial.print(ppm); // CO2
     Serial.print(delimiter);
     Serial.print(GetDUST_SmallPin1()); //Dust 1
