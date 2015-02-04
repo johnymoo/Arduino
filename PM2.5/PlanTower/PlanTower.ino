@@ -42,12 +42,12 @@ void loop() {
     while (!( mySerial.available() > 0 && findHeader() )) { };
     
     //DebugSerial.println(mySerial.available());
-    // 1~12 are dust data
     for( i=0;i<15;i++ )
     {
         data[i] = mySerial.read()<<8|mySerial.read();        
     }
-    for( i=0;i<15;i++)
+    // 1~12 are dust data
+    for( i=1;i<13;i++)
     {
         DebugSerial.print(",");
         DebugSerial.print(data[i]);
